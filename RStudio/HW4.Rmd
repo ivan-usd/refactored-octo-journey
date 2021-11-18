@@ -2,6 +2,16 @@
 title: "R Notebook"
 output: html_notebook
 ---
+#### Importing Data Science Package via Tidyverse
+```{r}
+#Imports Packages such as; ggplot2,dplyr,tidyr,readr,purrr,tibble,stringr and,forcats
+# with a single line call
+
+library(tidyverse)
+
+```
+
+
 
 #### 1. Write a multiplication script using either a “for” loop or a “while” loop. Show your script.
 (5 points)
@@ -20,7 +30,6 @@ customerDF = read.table(file = customerFP, sep = '\t', header = TRUE)
 
 #### 2.1: Figure out how to plot density of income. ​(5 points)
 ```{r}
-library(ggplot2)
 ggplot(customerDF, aes(x=income)) + geom_density()
 ```
 
@@ -47,6 +56,10 @@ marriedByIncome
 
 #### 4.2: What percentage of these customers have health insurance? ​(5 points)
 ```{r}
+
+marriedByIncome %>%
+  group_by(health.ins) %>%
+  summarise(percent = round(100 * n()/nrow(marriedByIncome),digits = 2))
 
 ```
 
@@ -82,4 +95,3 @@ marriedByIncome
 ```{r}
 
 ```
-
