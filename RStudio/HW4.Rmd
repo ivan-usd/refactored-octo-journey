@@ -1,15 +1,14 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 #### Importing Data Science Package via Tidyverse
 ```{r}
-#Imports Packages such as; ggplot2,dplyr,tidyr,readr,purrr,tibble,stringr and,forcats
-# with a single line call
 library(tidyverse)
 ```
-
-
 
 #### 1. Write a multiplication script using either a “for” loop or a “while” loop. Show your script.
 (5 points)
@@ -20,34 +19,43 @@ for (i in 0:5) {
 }
 ```
 
-#### 2. Using the customers data (custdata.tsv). Like histogram, you can also plot the density of a variable.
+#####  The following script uses a for loop to loop from 0 to 5 and print the current value multipled by two.
+
+***
+#### 2 Using the customers data (custdata.tsv). Like histogram, you can also plot the density of a variable.
 ```{r}
 customerFP = 'Data/custdata.tsv'
 customerDF = read.table(file = customerFP, sep = '\t', header = TRUE)
 ```
+#### 2.1 Figure out how to plot density of income. (5 points)
 
-#### 2.1: Figure out how to plot density of income. ​(5 points)
 ```{r}
 ggplot(customerDF, aes(x=income)) + geom_density()
 ```
 
-#### 2.2: Provide a couple of sentences of description along with the plot. Imagine you are explaining this to your manager or a senior leader. ​(5 points)
+#### 2.2: Provide a couple of sentences of description along with the plot. Imagine you are explaining this to your manager or a senior leader. (5 points)
 
-
+#####    The following graph is right skewed meaning that a high portion of customers from the data set have low income. As income increases the amount of customers drastically decreases, meaning a majority of customers contained in this data set are of the low income type. 
+  
+***
 
 #### 3.1: Create a bar chart for housing type using the customers data. Make sure to remove the “NA” type. [Hint: You can use subset function with an appropriate condition on housing type field.] Provide your commands and the plot.(5 points)
 
 ```{r}
 subsetHousingType = customerDF[complete.cases(customerDF[ , 7]),]
 ggplot(subsetHousingType) + geom_bar(aes(x=housing.type))
-
 ```
+
+
+#####  Subsetted data using complete.cases to remove NA values. From the graph it can be seen that homeowners with mortgage/loan and Rented have the highest counts.
+
+***
 
 #### 4.1: Extract a subset of customers that are married and have an income more than $50,000. ​(5 points)
 ```{r}
 marriedByIncome = subset(customerDF, marital.stat == "Married" & income > 50000)
-marriedByIncome
 ```
+#####  Subsetted data to only include married couple who earn more than 50000.
 
 #### 4.2: What percentage of these customers have health insurance? ​(5 points)
 ```{r}
@@ -55,6 +63,7 @@ marriedByIncome %>%
   group_by(health.ins) %>%
   summarise(percent = round(100 * n()/nrow(marriedByIncome),digits = 2))
 ```
+##### Based on the results 96.3% of the married couples have health insurance.
 
 #### 4.3: How does this percentage differ from that for the whole data set? ​(5 points)
 ```{r}
@@ -62,8 +71,13 @@ customerDF %>%
   group_by(health.ins) %>%
   summarise(percent = round(100 * n()/nrow(customerDF),digits = 2))
 ```
+##### The percentage drops as the entire data set is used by a total of 12.2%.
+
+***
 
 #### 5.1: In the customers data, do you think there is any correlation between age,income, and number of vehicles? Explain why or why not. ​(5 points)
+
+#####  Based off the previous findings it would be fair to state that since married couples with high income have health insurance a correlation can be made to age , income and number of vechiles. One can assume as an individual gets older earning potential grows and as a result is more likely to acquire a greater number of vechiles.  
 
 
 #### 5.2: Report your correlation numbers and interpretations. [Hint: Make sure to remove invalid data points, otherwise you may get incorrect answers!] ​(10 points)
@@ -74,6 +88,9 @@ subsetByAge = filter(customerDF, age <= 88 & age >= 18 & income >= 1000 & !is.na
 round(cor(subsetByAge[,c("age","income","num.vehicles")]),digits = 2)
 
 ```
+#####  After accounting for null and weird values i.e negative income and multiple cars or zero income with rent, a correlation coefficent was obtained. From the correlation coefficent age income and number of vechiles have no correlation at all. This disproves my inital thoughts regarding age income and number of vechiles assumption. 
+
+***
 
 #### 6. You are given a data file containing observations for dating. Someone who dated 1000 people (!) recorded data about how much that person travels (Miles), plays games (Games, and eats ice cream (Icecream). With this, the decision about that person (Like) is also noted. Use this data to answer the following questions using R:
 
@@ -85,6 +102,8 @@ datingDF = read.table(file = datingFP, sep = ',', header = TRUE)
 round(cor(datingDF[,c("Games","Miles","Icecream")]),digits = 2)
 
 ```
+#####  A slight positive correlation can be seen between Games and Miles, and no correlation can be seen between eating ice cream and playing games. 
+
 
 ```{r}
 filteredData = filter(datingDF, Games >= 1)
@@ -104,11 +123,12 @@ ggplot(filteredData, aes(x=Miles,y=Games)) + geom_point() +
   stat_smooth(method = 'lm') + ylim(0,30)
 ```
 
-
 ```{r}
 lm(Games~Miles, data = filteredData)
 ```
+#####  Before plotting the regression i cleaned up some values by dropping nulls and grabbing data values that had more than a Game played. Since the regression is trying to see Games played and Miles, having data values with zero games did not make sense. The regression model was made using ggplot and having a linear regression method.
 
+#####  Line equation used is as follows: Games = Miles(6.91e-05) + 4.84
 
 
 #### 6.3: Now let us see how well we can cluster the data based on the outcome (Like). Use Miles and Games to plot the data and color the points using Like. Now cluster the data using k-means and plot the same data using clustering information. Show the plot and compare it with the previous plot. Provide your thoughts about how well your clustering worked in two to four sentences. ​(10 points)
@@ -124,3 +144,4 @@ ggplot(filteredData, aes(x=Miles,y=Games, color =  likeCluster$cluster)) + geom_
 
 ```
 
+#####  The first graph by using colors had small doses concentrated in bottom left, large doses top centered and didnt like right centered. The clustering plot was pretty spot on with the distribution of likes seen in the first plot. It can be observed that the way the data is clustered the groupings are in similar positions to that of the first plot. 
