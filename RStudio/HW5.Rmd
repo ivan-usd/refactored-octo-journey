@@ -4,5 +4,44 @@ output: html_notebook
 ---
 
 ```{r}
-plot(cars)
+library(tidyverse)
+library(odbc)
+library(config)
 ```
+
+
+```{r}
+ad <- config::get(file = "../data/module5Data/config.yml")
+```
+
+#### Set up SQL connecction using obdc library and importing credentials via yml file
+
+```{r}
+con <- dbConnect(odbc(), 
+                 Driver = ad[["autodata"]][["driver"]], 
+                 Server = ad[["autodata"]][["server"]], 
+                 Database = ad[["autodata"]][["database"]],
+                 UID = ad[["autodata"]][["uid"]],
+                 PWD = ad[["autodata"]][["pwd"]],
+                 Trusted_Connection = "True")
+```
+
+```{sql, connection=con, output.var = "autoDF"}
+SELECT *
+FROM mpg
+```
+
+### Use R to understand how horsepower and weights are related to each other. Plot them using a scatter plot and color the data points using mpg. Do you see anything interesting/useful here? Report your observations with this plot. Now let us cluster the data on this plane in a “reasonable” number of groups. Show your plot where the data points are now colored with the cluster information and provide your interpretations. (10 points)
+
+```{r}
+ggplot(autoDF, aes(x=weight,y=horsepower, color = mpg)) + geom_point()
+```
+```{r}
+set.seed(20)
+mpgCluster = kmeans(autoDF[,4:5],3, nstart = 30)
+ggplot(autoDF, aes(x=weight,y=horsepower, color =  mpgCluster$cluster)) + geom_point()
+```
+
+#### Based on the plots there is a trend that higher horsepower and weight result to a low mpg
+#### Upon creating the clustered data it is interesting to see that a low horsepower and weight are all clustered within the same group.
+
