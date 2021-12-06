@@ -1,0 +1,74 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+#### Importing Data Science Package via Tidyverse
+```{r}
+library(tidyverse)
+library(cluster)
+library(ape)
+```
+
+#### Importing LPGA 2008 dataframe
+```{r}
+lpgaFP = 'Data/lpga2008.csv'
+df = read.table(file = lpgaFP, sep = ',', header = TRUE)
+```
+
+```{r}
+sum(is.na(df))
+```
+
+
+```{r}
+summary(df)
+```
+
+
+
+#### Use agglomerative clustering and divisive clustering on this dataset to find out which players have similar performance in the same season. Visualize the clusters using dendrograms for both types of clustering models. (20 points)
+
+```{r}
+df = na.omit(df)
+head(df)
+```
+
+
+```{r}
+df <- scale(df)
+```
+
+
+```{r}
+# methods to assess
+m <- c( "average", "single", "complete", "ward")
+names(m) <- c( "average", "single", "complete", "ward")
+
+# function to compute coefficient
+ac <- function(x) {
+  agnes(df, method = x)$ac
+}
+map_dbl(m, ac)
+```
+
+
+```{r}
+aggCluster = agnes(df, method = "complete")
+
+#hcd = as.dendrogram(aggCluster)
+#plot(hcd, type = "triangle")
+# radial
+pltree(aggCluster, cex = 0.6, hang = -1, main = "Dendrogram of agnes")
+```
+
+
+
+```{r}
+divCluster = diana(df)
+divCluster$dc
+```
+
+
+```{r}
+pltree(divCluster, cex = 0.6, hang = -1, main = "Dendrogram of diana")
+```
