@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "HW 6 Notebook"
 output: html_notebook
 ---
 #### Importing Data Science Package via Tidyverse
@@ -33,11 +33,17 @@ df = na.omit(df)
 head(df)
 ```
 
-
 ```{r}
-df <- scale(df)
+df = df %>%
+      mutate_if(is.numeric,scale)
+
 ```
 
+```{r}
+head(df)
+```
+
+#### Finding the method that yileds the strongest clustering structure. The values closest to 1 signifies a strong cluster, that method was ward.
 
 ```{r}
 # methods to assess
@@ -51,16 +57,16 @@ ac <- function(x) {
 map_dbl(m, ac)
 ```
 
+#### Used agnes function to get the agglomerative cluster (bottom-up mode), then graphed using pltree.
+
 
 ```{r}
-aggCluster = agnes(df, method = "complete")
+aggCluster = agnes(df, method = "ward")
 
-#hcd = as.dendrogram(aggCluster)
-#plot(hcd, type = "triangle")
-# radial
-pltree(aggCluster, cex = 0.6, hang = -1, main = "Dendrogram of agnes")
+pltree(aggCluster, cex = .25, hang = -1, main = "Dendrogram of agnes")
 ```
 
+#### Used diana funtion to get the divisive cluster (top-down mode).
 
 
 ```{r}
@@ -70,5 +76,8 @@ divCluster$dc
 
 
 ```{r}
-pltree(divCluster, cex = 0.6, hang = -1, main = "Dendrogram of diana")
+pltree(divCluster, cex = 0.25, hang = -1, main = "Dendrogram of diana")
 ```
+
+#### As can be seen from the different approaches there seems to be alot more clusters in the agglomerative cluster as should be expected since it makes most of it pairings at the initial variables (bottom-up approach). As for the Divisive Cluster there appears to be alot more symmetery and less clustering near the bottom.
+
